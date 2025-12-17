@@ -1,22 +1,20 @@
-FROM python:3.8-slim-bookworm
+FROM python:3.10-slim-bookworm
 
 ENV PIP_NO_CACHE_DIR=1
 
-# Install git (now works)
-RUN apt-get update && \
-    apt-get install -y git && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y \
+    git \
+    build-essential \
+    gcc \
+    libffi-dev \
+    libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Upgrade pip & setuptools
-RUN pip3 install --upgrade pip setuptools
-
-# Copy application code
-COPY . /app/
 WORKDIR /app/
 
-# Install Python dependencies
-RUN pip3 install --no-cache-dir -U -r requirements.txt
+COPY requirements.txt .
+RUN pip install -U pip setuptools && pip install -r requirements.txt
 
-# Run your module
-CMD ["python3", "-m", "TEAMZYRO"]
+COPY . .
+
+CMD ["python", "-m", "TEAMZYRO"]
