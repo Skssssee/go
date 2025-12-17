@@ -1,43 +1,36 @@
 from TEAMZYRO import *
 import importlib
+import logging
+import asyncio
 from TEAMZYRO.modules import ALL_MODULES
 
 
-async def send_start_message(application):
-    try:
-        await application.bot.send_message(
-            chat_id=START_CHAT_ID,
-            text="🤖 Bot Started Successfully!"
-        )
-    except Exception as e:
-        LOGGER("TEAMZYRO").warning(f"Startup message failed: {e}")
-
-
 async def post_init(application):
+    # Start Pyrogram safely inside PTB loop
     await ZYRO.start()
-    await send_start_message(application)
+
+    # Send start message after bot fully starts
+    await send_start_message()
 
 
 def main() -> None:
 
+    # Load all modules (safe)
     for module_name in ALL_MODULES:
         importlib.import_module("TEAMZYRO.modules." + module_name)
-
-    LOGGER("TEAMZYRO.modules").info(
-        "𝐀𝐥𝐥 𝐅𝐞𝐚𝐭𝐮𝐫𝐞𝐬 𝐋𝐨𝐚𝐝𝐞𝐝 𝐁𝐚𝐛𝐲🥳..."
-    )
+        
+    LOGGER("TEAMZYRO.modules").info("𝐀𝐥𝐥 𝐅𝐞𝐚𝐭𝐮𝐫𝐞𝐬 𝐋𝐨𝐚𝐝𝐞𝐝 𝐁𝐚𝐛𝐲🥳...")
 
     application.post_init = post_init
 
+    # Prevent "Event loop is closed"
     application.run_polling(
         drop_pending_updates=True,
         close_loop=False
     )
 
     LOGGER("TEAMZYRO").info(
-        "╔═════ஜ۩۞۩ஜ════╗\n"
-        "  ☠︎︎MADE BY GOJOXNETWORK☠︎︎\n"
-        "╚═════ஜ۩۞۩ஜ════╝"
+        "╔═════ஜ۩۞۩ஜ════╗\n  ☠︎︎MADE BY GOJOXNETWORK☠︎︎\n╚═════ஜ۩۞۩ஜ════╝"
     )
 
 
